@@ -1,0 +1,111 @@
+public class Solution {
+    public long power(long num,int pow,int mod){
+        if(pow==0||num==1)
+            return 1;
+        
+        long result=power(num,pow/2,mod);
+        result=(result%mod*result%mod)%mod;
+        if(pow%2==1)
+            result=(result%mod*num%mod)%mod;
+        
+        if(result<0)
+            result=result+mod;
+
+        return result;
+    }
+
+    public long getFactorialReverseMod(int num,int mod){
+        //if(num==0||num==1)
+            //return 1L;
+        
+        long result=getFactorialwithMod(num,mod);
+        /*while(num>0){
+            result=result*num;
+            num--;
+        }*/
+        return power(result,mod-2,mod);
+    }
+    public long getFactorialwithMod(int num,int mod){
+        long result=1L;
+        if(num==0||num==1||num>mod)
+            return result;
+        
+        for(int i=2;i<=num;i++){
+            result=(result*i)%mod;
+        }
+
+        if(result<0)
+            result=result+mod;
+
+        return result%mod;
+    }
+
+    public int findRank(String A) {
+        int len=A.length();
+        TreeMap<Character,Integer> charCounts=new TreeMap();
+        for(int i=0;i<len;i++){
+            char ch=A.charAt(i);
+            if(charCounts.containsKey(ch))
+                charCounts.put(ch,charCounts.get(ch)+1);
+            else
+                charCounts.put(ch,1);
+        }
+        ArrayList<Character> sortedString=new ArrayList(charCounts.keySet());
+        long result=0L;
+        long beforeWords=0L;
+        int mod=1000003;
+        int strLen=len;
+        long numerator;
+        long denominator=1L;   
+
+        for(int j=0;j<sortedString.size();j++){
+            char beforeChar=sortedString.get(j);
+            if(charCounts.get(beforeChar)>1)
+                denominator=(denominator*getFactorialReverseMod(charCounts.get(beforeChar),mod))%mod;
+        }     
+
+        //System.out.println(denominator);
+        for(int i=0;i<len;i++){
+            char ch=A.charAt(i);
+            int chRank;
+            beforeWords=0L;
+            numerator=getFactorialwithMod(strLen-1,mod);
+
+            for(int j=0;j<sortedString.size();j++){
+                char beforeChar=sortedString.get(j);
+                if(beforeChar==ch)
+                    break;
+                if(charCounts.get(beforeChar)>1){
+                    beforeWords=beforeWords+(numerator*getFactorialwithMod(charCounts.get(beforeChar),mod)*(denominator%mod*getFactorialReverseMod(charCounts.get(beforeChar)-1,mod)%mod)%mod)%mod;
+                }
+                else{
+                    beforeWords=(beforeWords+(numerator%mod*denominator%mod)%mod)%mod;
+                }
+
+                if(beforeWords<0)
+                    beforeWords=beforeWords+mod;
+                
+            }
+
+            result = (result+(beforeWords)%mod)%mod;
+
+            if(result<0)
+                result=result+mod;
+
+            strLen--;
+            if(charCounts.get(ch)>1){
+                charCounts.put(ch,charCounts.get(ch)-1);
+                denominator=(denominator*(getFactorialReverseMod(charCounts.get(ch),mod)*getFactorialwithMod(charCounts.get(ch)+1,mod))%mod)%mod;
+            }
+            else{
+                charCounts.remove(ch);
+                sortedString.remove(new Character(ch));
+            }
+            //System.out.println(numerator+"-"+denominator);
+        }
+
+        result++;
+
+        return (int)result%mod;
+    }
+}
