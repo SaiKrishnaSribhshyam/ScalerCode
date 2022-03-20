@@ -1,0 +1,58 @@
+public class Solution {
+    public boolean isPossible(int[] A,long minTime,int workers){
+        int len=A.length;
+        int currWorkTime=A[0];
+        for(int i=1;i<len;i++){
+            currWorkTime+=A[i];
+            if(currWorkTime>minTime){
+                workers--;
+                currWorkTime=A[i];
+            }
+            else if(currWorkTime==A[i]){
+                workers--;
+                currWorkTime=0;
+            }
+
+            if(workers<0)
+                return false;            
+        }
+
+        if((currWorkTime>minTime)||(currWorkTime>0 && workers<=0))
+            return false;
+
+        return true;
+
+    }
+    public int paint(int A, int B, int[] C) {
+        int len=C.length;
+        long start=C[0];
+        long end=start;
+        //C[0]=(int)start;
+        for(int i=1;i<len;i++){
+            //C[i]*=B;
+            end+=C[i];
+            start=Math.max(C[i],start);
+            //System.out.println(start+"-"+end);
+        }
+        long minTime=1;
+        int mod=10000003;
+        while(start<=end){
+            long mid=(start+end)/2;
+            //System.out.println(mid+"-"+start+"-"+end);
+            if(isPossible(C,mid,A)){
+                minTime=mid;
+                end=mid-1;
+            }
+            else{
+                start=mid+1;
+            }
+        }
+
+        long result=(minTime*B)%mod;
+
+        if(result<0)
+            result=result+mod;
+
+        return (int)(result);
+    }
+}
