@@ -1,0 +1,38 @@
+public class Solution {
+    public long getFactorial(int len,int mod){
+        long result=1L;
+        while(len>0){
+            result=(result%mod*len%mod)%mod;
+            len--;
+        }
+        return (result%mod);
+    }
+    public int findRank(String A) {
+        int length=A.length();
+        if(length==1)
+            return 1;
+        int mod=1000003;
+        char[] sortedArray=new char[length];
+        int firstCharRank=0;
+        //copy to charArray
+        for(int i=0;i<length;i++)
+            sortedArray[i]=A.charAt(i);
+        //sorting char array
+        for(int i=0;i<length;i++){
+            for(int j=i+1;j<length;j++){
+                if(sortedArray[i]>sortedArray[j]){
+                    char temp=sortedArray[i];
+                    sortedArray[i]=sortedArray[j];
+                    sortedArray[j]=temp;
+                }
+            }
+            if(sortedArray[i]==A.charAt(0))
+                firstCharRank=i;
+        }
+        String sortedString=new String(sortedArray);
+        if(sortedString.equals(A))
+            return 1;
+        //System.out.print(sortedString);
+        return (int)(((getFactorial(length-1,mod))%mod*firstCharRank%mod)%mod+findRank(A.substring(1))%mod)%mod;
+    }
+}
