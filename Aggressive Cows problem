@@ -1,0 +1,36 @@
+public class Solution {
+    public boolean isminDistancePossible(int[] A,int distance,int availableCows){
+        int len=A.length;
+        int lastStall=A[0];
+        int stalledCows=1;
+        for(int i=0;i<len;i++){
+            if(A[i]>=lastStall+distance){
+                stalledCows++;
+                lastStall=A[i];
+            }
+            if(stalledCows==availableCows){
+                return true;
+            }
+        }
+        return false;
+
+    }
+    public int solve(int[] A, int B) {
+        int len=A.length;
+        Arrays.sort(A);
+        int low=1;
+        int high=A[len-1]-A[0];
+        int possibleDistance=1;
+        while(low<=high){
+            int distance=(low+high)/2;
+            if(isminDistancePossible(A,distance,B)){
+                possibleDistance=distance;
+                low=distance+1;
+            }
+            else{
+                high=distance-1;
+            }
+        }
+        return possibleDistance;
+    }
+}
